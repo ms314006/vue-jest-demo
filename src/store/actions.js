@@ -1,9 +1,4 @@
-import Vue from "vue";
-import Vuex from "vuex";
-
-Vue.use(Vuex);
-
-export default new Vuex.Store({
+export default {
   state: {
     text: "Hi, You can input text, exchange me."
   },
@@ -25,4 +20,4 @@ export default new Vuex.Store({
       return state.text;
     }
   }
-});
+}
