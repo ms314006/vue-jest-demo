@@ -2,7 +2,7 @@
   <div class="text-align-center">
     <label>xxxx<input type="text" @input="actionInputIfTrue" /></label>
     <button @click="actionClick()">Click</button>
-    <p>{{ $store.getters.text }}</p>
+    <p data-testid="promptText">{{ $store.getters.text }}</p>
   </div>
 </template>
 

@@ -1,43 +1,47 @@
-import { shallowMount, createLocalVue } from "@vue/test-utils";
-import store from "@/store";
-import Actions from "@/views/Actions.vue";
+import { render, fireEvent } from '@testing-library/vue';
+import store from "../../src/store/actions";
+import Actions from "../../src/views/Actions.vue";
+
+const renderActionsComponent = customStore => (
+  render(Actions, { store: { ...store, ...customStore } })
+);
 
 describe("Actions.vue", () => {
-  const localVue = createLocalVue();
-  const wrapper = shallowMount(Actions, { store, localVue });
   it("shwo Hi, You can input text, exchange me.", () => {
-    const p = wrapper.find("p");
-    expect(store.getters.text).toBe("Hi, You can input text, exchange me.");
-    expect(p.text()).toBe("Hi, You can input text, exchange me.");
-  });
-  it('dispatches "actionInput" when input event value is "input"', () => {
-    const input = wrapper.find("input");
-    input.element.value = "input";
-    input.trigger("input");
+    const { getByTestId } = renderActionsComponent();
 
-    const p = wrapper.find("p");
+    const promptText = getByTestId("promptText");
 
-    expect(p.text()).toBe("input");
-    expect(store.getters.text).toBe("input");
+    expect(promptText.innerHTML).toBe("Hi, You can input text, exchange me.");
   });
 
-  it('does not dispatch "actionInput" when event value is not "input"', () => {
-    const input = wrapper.find("input");
-    input.element.value = "not input";
-    input.trigger("input");
+  it('dispatches "actionInput" when input event value is "input"', async () => {
+    const { getByLabelText, getByTestId } = renderActionsComponent();
 
-    const p = wrapper.find("p");
+    const xxxxInput = getByLabelText("xxxx");
+    await fireEvent.input(xxxxInput, { target: { value: "input" } });
 
-    expect(p.text()).toBe("");
-    expect(store.getters.text).toBe("");
+    const promptText = getByTestId("promptText");
+    expect(promptText.innerHTML).toBe("input");
   });
 
-  it('calls store action "actionClick" when button is clicked', () => {
-    wrapper.find("button").trigger("click");
+  it('does not dispatch "actionInput" when event value is not "input"', async () => {
+    const { getByLabelText, getByTestId } = renderActionsComponent();
 
-    const p = wrapper.find("p");
+    const xxxxInput = getByLabelText("xxxx");
+    await fireEvent.input(xxxxInput, { target: { value: "not input" } });
 
-    expect(p.text()).toBe("input!!");
-    expect(store.getters.text).toBe("input!!");
+    const promptText = getByTestId("promptText");
+    expect(promptText.innerHTML).toBe("");
+  });
+
+  it('calls store action "actionClick" when button is clicked', async () => {
+    const { getByText, getByTestId } = renderActionsComponent();
+
+    const button = getByText("Click");
+    await fireEvent.click(button);
+
+    const promptText = getByTestId("promptText");
+    expect(promptText.innerHTML).toBe("input!!");
   });
 });
